@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="uk" data-phase="night">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0b1329" id="meta-theme">
+<title>Новорічна Мафія Онлайн</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1329; --fg:#f1f5f9; --muted:#94a3b8; --card:rgba(19,28,56,.82);
+  --bd:rgba(56,189,248,.22); --chip:rgba(255,255,255,.06); --line:rgba(255,255,255,.1);
+  --accent:#38bdf8; --red:#f43f5e; --green:#34d399; --amber:#fbbf24; --input:rgba(0,0,0,.25);
+}
+html[data-phase="day"]{
+  --bg:#f1f5f9; --fg:#0f172a; --muted:#475569; --card:rgba(255,255,255,.93);
+  --bd:rgba(225,29,72,.22); --chip:rgba(15,23,42,.05); --line:rgba(15,23,42,.12);
+  --accent:#e11d48; --input:rgba(15,23,42,.06);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{
+  min-height:100vh;min-height:100dvh;background:var(--bg);color:var(--fg);
+  font-family:'Comfortaa',sans-serif;font-size:14px;transition:background-color .8s,color .8s;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body.in-room{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+input,textarea,button{font-family:inherit}
+input,textarea{user-select:text;-webkit-user-select:text;font-size:16px;color:var(--fg)}
+button{cursor:pointer;color:inherit}
+[hidden]{display:none!important}
+h1,h2,h3,h4{margin:0}
+.muted{color:var(--muted)}
+.hd{font-family:'Cinzel',serif}
+
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:10}
+.topbar,#phasebar,main,#tabbar{position:relative;z-index:2}
+
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 12px;padding-top:calc(30px + env(safe-area-inset-top));
+  background:var(--card);backdrop-filter:blur(14px);border-bottom:1px solid var(--bd);
+  position:relative;z-index:2;
+}
+.brand{display:flex;align-items:center;gap:8px;min-width:0}
+.brand i{color:var(--red);font-size:20px}
+.brand h1{font-family:'Cinzel',serif;font-size:16px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-actions{display:flex;align-items:center;gap:4px}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:0;background:transparent;font-size:17px;display:inline-flex;align-items:center;justify-content:center}
+.icon-btn:active{background:var(--chip)}
+#btn-snow{color:#38bdf8}#btn-music{color:#f87171}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:999px;background:var(--chip);border:1px solid var(--line);max-width:150px}
+.chip img{width:28px;height:28px;border-radius:50%}
+.chip span{font-weight:700;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+#phasebar{
+  padding:8px 12px;background:var(--card);backdrop-filter:blur(14px);border-bottom:1px solid var(--bd);
+  position:sticky;top:env(safe-area-inset-top);z-index:19;
+}
+.pb-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pb-hint{margin-top:6px;font-size:12px;font-weight:700;line-height:1.35}
+.pb-hint.act{color:var(--amber)}
+html[data-phase="day"] .pb-hint.act{color:#b45309}
+#action-card{scroll-margin-top:calc(110px + env(safe-area-inset-top))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top);background:var(--card);backdrop-filter:blur(14px);z-index:18}
+.pb-bar{height:3px;margin:8px -12px -8px;background:var(--line)}
+.pb-bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s linear}
+.pb-bar i.warn{background:var(--red)}
+button,.tgt{touch-action:manipulation;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+body.kb #tabbar{display:none!important}
+body.kb.in-room{padding-bottom:env(safe-area-inset-bottom)}
+.seg{display:flex;gap:8px;margin:0 0 10px}
+.seg button{flex:1;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--chip);font-weight:700;font-size:12px}
+.seg button.on{background:rgba(244,63,94,.2);border-color:var(--red)}
+.tgt img{width:28px;height:28px;border-radius:50%;flex:none;background:rgba(0,0,0,.2)}
+@media(max-width:1023px){
+  .flip{height:132px}
+  .players{grid-template-columns:1fr 1fr}
+  .pl{padding:6px 8px;gap:8px}
+  .pl img{width:34px;height:34px}
+  .card{padding:12px;border-radius:18px}
+  .tgt{min-height:56px;font-size:14px}
+  .chat-card{height:calc(100dvh - 250px);min-height:300px}
+}
+.pb-hint.go{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}
+.dot.n{animation:pulse 1.2s infinite;top:6px;left:calc(50% + 6px);width:auto;min-width:17px;height:17px;padding:0 4px;border-radius:9px;font-size:10px;line-height:17px;text-align:center;color:#fff;font-weight:800}
+#toast.show.go{pointer-events:auto;cursor:pointer}
+.badge-phase{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;font-weight:700;font-size:12px;letter-spacing:.04em;
+  background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.timer{display:inline-flex;align-items:center;gap:6px;font-family:ui-monospace,Menlo,monospace;font-weight:800;font-size:18px;padding:4px 10px;border-radius:10px;background:var(--chip);border:1px solid var(--line)}
+.timer.warn{color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.5}}
+
+main{max-width:1200px;margin:0 auto;padding:12px;display:block}
+.card{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--bd);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.card-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.card-title h3{font-family:'Cinzel',serif;font-size:14px;letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.small{font-size:11px}
+
+.btn{min-height:44px;padding:10px 16px;border-radius:12px;border:0;font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:#fff;background:#475569;transition:transform .1s,opacity .2s}
+.btn:active{transform:scale(.96)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn-red{background:linear-gradient(90deg,#dc2626,#e11d48)}
+.btn-green{background:#059669}
+.btn-ghost{background:var(--chip);color:var(--fg);border:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+
+.field{width:100%;padding:13px 14px;border-radius:12px;background:var(--input);border:1px solid var(--line);outline:none}
+.field:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(244,63,94,.2)}
+
+/* login */
+#screen-login{display:flex;justify-content:center;padding:24px 0}
+.login-card{max-width:420px;width:100%;text-align:center;padding:24px 20px}
+.login-ico{width:72px;height:72px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#ef4444;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3)}
+
+/* layout */
+@media(max-width:1023px){
+  .pane{display:none}.pane.active{display:block}
+}
+@media(min-width:1024px){
+  main{padding:20px}
+  .layout{display:grid;grid-template-columns:7fr 5fr;gap:20px;align-items:start}
+  .pane{display:block!important}
+  #tabbar{display:none!important}
+  body.in-room{padding-bottom:env(safe-area-inset-bottom)}
+  .brand h1{font-size:20px}
+}
+
+/* tabbar */
+#tabbar{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:var(--card);backdrop-filter:blur(14px);border-top:1px solid var(--bd);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body.in-room #tabbar{display:flex}
+.tab{flex:1;min-height:58px;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:700;color:var(--muted);position:relative}
+.tab i{font-size:18px}
+.tab.active{color:var(--accent)}
+.dot{position:absolute;top:8px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--red)}
+
+/* role card */
+.flip{perspective:1000px;height:150px;cursor:pointer}
+.flip-in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1);border-radius:18px}
+.flip-in.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:18px;padding:14px;display:flex;border:1px solid var(--line)}
+.face.front{background:linear-gradient(135deg,#450a0a,#0f172a);flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#f1f5f9}
+.face.back{transform:rotateY(180deg);background:#0f172a;color:#f1f5f9;align-items:center;justify-content:space-between;gap:10px}
+.role-ico{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;background:rgba(0,0,0,.4);border:1px solid;flex:none}
+.role-name{font-family:'Cinzel',serif;font-size:18px;text-transform:uppercase;letter-spacing:.05em}
+.allies{border-left:1px solid rgba(255,255,255,.15);padding-left:10px;text-align:right;font-size:11px;max-width:38%}
+.allies b{display:block;color:#f87171;text-transform:uppercase;font-size:10px}
+.pill{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:700;border:1px solid}
+.pill.ok{background:rgba(16,185,129,.18);color:#10b981;border-color:rgba(16,185,129,.35)}
+.pill.bad{background:rgba(244,63,94,.18);color:#f43f5e;border-color:rgba(244,63,94,.35)}
+
+/* targets */
+.targets{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:480px){.targets{grid-template-columns:repeat(3,1fr)}}
+.tgt{min-height:48px;padding:8px;border-radius:12px;background:var(--chip);border:1px solid var(--line);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;word-break:break-word}
+.tgt:active{transform:scale(.96)}
+.tgt.sel{background:rgba(244,63,94,.2);border-color:var(--red);box-shadow:0 0 14px rgba(244,63,94,.35)}
+.tgt .cnt{font-size:11px;background:var(--red);color:#fff;border-radius:8px;padding:1px 6px}
+.prompt{text-align:center;font-weight:700;color:var(--amber);margin:4px 0 10px;font-size:13px}
+html[data-phase="day"] .prompt{color:#b45309}
+.notes{margin-top:10px;padding:10px;border-radius:12px;background:var(--chip);border:1px dashed var(--line);font-size:12px}
+
+/* players */
+.players{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:520px){.players{grid-template-columns:1fr 1fr}}
+.pl{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:var(--chip);border:1px solid var(--line)}
+.pl.dead{opacity:.45;filter:grayscale(.8)}
+.pl img{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.2);flex:none}
+.pl .nm{font-weight:700;font-size:13px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.tag{font-size:9px;padding:1px 6px;border-radius:6px;background:rgba(16,185,129,.2);color:#10b981}
+.tag.b{background:rgba(148,163,184,.25);color:var(--muted)}
+.tag.h{background:rgba(251,191,36,.2);color:#d97706}
+.tag.o{background:rgba(148,163,184,.2);color:var(--muted)}
+
+/* chat & log */
+.chat-card{display:flex;flex-direction:column;height:460px;height:min(62dvh,460px);min-height:300px}
+.log-card{display:flex;flex-direction:column;height:calc(100vh - 240px);height:calc(100dvh - 240px);min-height:300px}
+@media(min-width:1024px){.chat-card{height:420px}.log-card{height:250px}}
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-right:2px;font-size:13px;display:flex;flex-direction:column;gap:6px}
+.msg{padding:8px 10px;border-radius:12px;background:var(--chip);border:1px solid var(--line);max-width:92%;word-break:break-word}
+.msg.mine{align-self:flex-end;background:rgba(220,38,38,.16);border-color:rgba(220,38,38,.3)}
+.msg.sys{align-self:center;background:color-mix(in srgb,var(--accent) 14%,transparent);border-color:color-mix(in srgb,var(--accent) 35%,transparent);color:var(--fg);font-weight:700;font-size:12px;text-align:center}
+.msg.cry{background:linear-gradient(135deg,rgba(244,63,94,.25),rgba(127,29,29,.35));border-left:4px solid var(--red);animation:fade .4s}
+.msg b{font-size:11px;display:block;margin-bottom:2px}
+.msg .tm{font-size:9px;color:var(--muted);margin-left:6px;font-weight:400}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.log-i{padding:6px 0;border-bottom:1px solid var(--line);font-size:12px}
+.log-i small{color:var(--muted);margin-right:6px}
+.chat-form{display:flex;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.chat-form .field{padding:11px 12px}
+.chat-form .btn{min-width:48px;padding:10px 14px}
+.glow{animation:glow 2s infinite;background:rgba(127,29,29,.7);border:1px solid rgba(244,63,94,.5);color:#fecaca}
+@keyframes glow{50%{box-shadow:0 0 22px rgba(244,63,94,.8)}}
+
+/* festive */
+#garland{position:absolute;left:0;right:0;top:env(safe-area-inset-top);height:34px;pointer-events:none;z-index:3;overflow:hidden}
+#garland svg{display:block}
+.bulb{position:absolute;width:8px;height:12px;border-radius:50% 50% 50% 50%/35% 35% 65% 65%;transform:translateX(-50%);box-shadow:0 0 8px 2px currentColor;animation:bl 1.6s ease-in-out infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+#xtree{position:fixed;right:-4%;bottom:0;width:min(92vw,400px);z-index:1;pointer-events:none;opacity:.55}
+#xtree svg{display:block;width:100%;height:auto}
+.lg circle{animation:bl 1.8s ease-in-out infinite}
+.lg circle:nth-child(5n+1){fill:#ef4444}.lg circle:nth-child(5n+2){fill:#fbbf24}.lg circle:nth-child(5n+3){fill:#38bdf8}.lg circle:nth-child(5n+4){fill:#f472b6}.lg circle:nth-child(5n){fill:#fde047}
+.lg circle:nth-child(3n){animation-delay:.6s}.lg circle:nth-child(3n+1){animation-delay:1.1s}
+#xtree .star{animation:bl 2.4s ease-in-out infinite}
+@media(min-width:1024px){#xtree{width:360px;right:1%;opacity:.85}}
+html[data-phase="day"] #xtree{opacity:.4}
+@media(prefers-reduced-motion:reduce){.bulb,.lg circle,#xtree .star{animation:none}}
+
+/* reply */
+.msg .rp{float:right;border:0;background:transparent;color:var(--muted);font-size:13px;min-width:30px;min-height:24px;padding:0 0 0 10px}
+.quote{border-left:3px solid var(--accent);padding:2px 8px;margin-bottom:4px;font-size:11px;color:var(--muted);background:var(--chip);border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msg .quote b{display:inline;margin:0 6px 0 0;color:var(--accent)}
+.reply-bar{display:flex;align-items:center;gap:8px;margin-top:8px;padding:6px 6px 6px 10px;border-left:3px solid var(--accent);background:var(--chip);border-radius:8px;font-size:12px}
+.reply-bar>div{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.reply-bar b{margin-right:6px;color:var(--accent)}
+.reply-bar button{border:0;background:transparent;font-size:20px;color:var(--muted);width:34px;height:34px}
+
+/* modals */
+.modal{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);padding:16px}
+.modal.open{display:flex}
+.modal .card{max-width:460px;width:100%;margin:0;text-align:center;max-height:92vh;overflow:auto}
+.victory-ico{width:76px;height:76px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:34px;background:rgba(251,191,36,.2);color:#fbbf24}
+.reveal{text-align:left;background:var(--chip);border:1px solid var(--line);border-radius:14px;padding:10px;max-height:220px;overflow:auto;margin:14px 0;font-size:12px}
+.reveal div{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
+
+#toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;background:#1e293b;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;max-width:90%;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s}
+#toast.show{opacity:1}
+.err{border-color:var(--red)}
+.err code{background:var(--chip);padding:1px 6px;border-radius:6px;font-size:12px}
+.err li{margin:4px 0}
+</style>
+</head>
+<body>
+<canvas id="snow"></canvas>
+<div id="garland" aria-hidden="true"></div>
+<div id="xtree" aria-hidden="true">
+<svg viewBox="0 0 200 290" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16a34a"/><stop offset="1" stop-color="#14532d"/></linearGradient></defs>
+<rect x="88" y="262" width="24" height="26" rx="3" fill="#7c4a1e"/>
+<polygon points="100,150 10,268 190,268" fill="url(#tg)"/>
+<polygon points="100,95 28,205 172,205" fill="url(#tg)"/>
+<polygon points="100,50 45,148 155,148" fill="url(#tg)"/>
+<polygon points="100,16 62,95 138,95" fill="url(#tg)"/>
+<path d="M68,78 Q100,92 132,78 M52,128 Q100,148 148,128 M36,185 Q100,210 164,185 M20,245 Q100,272 180,245" stroke="#fbbf24" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".85"/>
+<g class="lg">
+<circle cx="76" cy="82" r="4.5"/><circle cx="100" cy="85" r="4.5"/><circle cx="124" cy="82" r="4.5"/>
+<circle cx="60" cy="134" r="4.5"/><circle cx="80" cy="141" r="4.5"/><circle cx="100" cy="143" r="4.5"/><circle cx="120" cy="141" r="4.5"/><circle cx="140" cy="134" r="4.5"/>
+<circle cx="44" cy="192" r="4.5"/><circle cx="68" cy="201" r="4.5"/><circle cx="100" cy="205" r="4.5"/><circle cx="132" cy="201" r="4.5"/><circle cx="156" cy="192" r="4.5"/>
+<circle cx="28" cy="252" r="4.5"/><circle cx="60" cy="264" r="4.5"/><circle cx="100" cy="267" r="4.5"/><circle cx="140" cy="264" r="4.5"/><circle cx="172" cy="252" r="4.5"/>
+</g>
+<polygon class="star" points="100,2 104,12 115,12 106,18 110,29 100,22 90,29 94,18 85,12 96,12" fill="#fde047"/>
+</svg></div>
+
+<header class="topbar">
+  <div class="brand">
+    <i class="fa-solid fa-tree"></i>
+    <h1>Новорічна Мафія</h1>
+  </div>
+  <div class="top-actions">
+    <button class="icon-btn" id="btn-snow" aria-label="Сніг"><i class="fa-solid fa-snowflake"></i></button>
+    <button class="icon-btn" id="btn-music" aria-label="Музика"><i class="fa-solid fa-music"></i></button>
+    <button class="chip" id="user-chip" hidden aria-label="Вийти з кімнати">
+      <img id="chip-av" alt=""><span id="chip-name"></span><i class="fa-solid fa-right-from-bracket muted small"></i>
+    </button>
+  </div>
+</header>
+
+<div id="phasebar" hidden>
+ <div class="pb-row">
+  <div class="badge-phase"><i id="phase-ico" class="fa-solid fa-users"></i><span id="phase-title">ЛОБІ</span></div>
+  <div class="row" style="gap:6px">
+    <div class="timer" id="timer" hidden><i class="fa-regular fa-clock small muted"></i><span id="timer-txt">00:00</span></div>
+    <button class="icon-btn" id="btn-skip" hidden title="Наступна фаза (хост)" aria-label="Наступна фаза"><i class="fa-solid fa-forward-step"></i></button>
+  </div>
+ </div>
+ <div class="pb-hint" id="pb-hint"></div>
+ <div class="pb-bar"><i id="pb-fill"></i></div>
+</div>
+
+<main>
+  <div class="card err" id="config-error" hidden>
+    <h3 class="hd" style="margin-bottom:8px"><i class="fa-solid fa-triangle-exclamation"></i> Потрібно вставити конфіг Firebase</h3>
+    <p class="small">Відкрийте <code>index.html</code>, знайдіть <code>firebaseConfig</code> у скрипті і вставте свої значення:</p>
+    <ol class="small">
+      <li>Firebase Console → <b>Build → Realtime Database</b> → Create database.</li>
+      <li><b>Build → Authentication</b> → Sign-in method → увімкніть <b>Anonymous</b>.</li>
+      <li><b>Project settings → Your apps → Web</b> → скопіюйте конфіг (обов'язково з <code>databaseURL</code>).</li>
+      <li>Вставте правила з коментаря в кінці файлу у вкладку Rules бази.</li>
+    </ol>
+  </div>
+
+  <section id="screen-login">
+    <div class="card login-card">
+      <div class="login-ico"><i class="fa-solid fa-gifts"></i></div>
+      <h2 class="hd" style="font-size:26px;margin-bottom:6px">Новорічна Кімната</h2>
+      <p class="muted small" style="margin:0 0 16px">Введіть нікнейм, щоб увійти в спільне лобі. Усі, хто відкриє це посилання, потраплять в одну кімнату.</p>
+      <form id="login-form">
+        <input class="field" id="nick" required maxlength="16" placeholder="Ваш новорічний нікнейм…" autocomplete="off" style="text-align:center;font-weight:700;margin-bottom:12px">
+        <button class="btn btn-red" style="width:100%;font-size:13px" type="submit"><span id="login-label">Увійти в кімнату</span> <i class="fa-solid fa-sleigh"></i></button>
+      </form>
+      <p id="login-note" class="small" style="margin:12px 0 0;color:var(--amber)"></p>
+      <button class="btn btn-ghost" id="btn-reset-room" type="button" hidden style="width:100%;margin-top:10px">Скинути застряглу кімнату</button>
+    </div>
+  </section>
+
+  <section id="screen-game" class="layout" hidden>
+    <div>
+      <div class="pane active" data-pane="game">
+        <!-- Role -->
+        <div class="card">
+          <div class="card-title">
+            <span class="small muted" style="text-transform:uppercase;letter-spacing:.1em;font-weight:700">Ваша секретна роль</span>
+            <span class="pill ok" id="role-status">Очікування</span>
+          </div>
+          <div class="flip" id="flip">
+            <div class="flip-in" id="flip-in">
+              <div class="face front">
+                <i class="fa-solid fa-certificate" style="font-size:30px;color:#f87171;margin-bottom:8px"></i>
+                <b id="front-title" style="font-size:13px">Очікуємо старт гри</b>
+                <span id="front-sub" class="small" style="color:#94a3b8;margin-top:4px">Мінімум 4 гравці. Ролі роздаються автоматично.</span>
+              </div>
+              <div class="face back" id="role-back">
+                <div style="display:flex;align-items:center;gap:12px;min-width:0">
+                  <div class="role-ico" id="role-icobox"><i id="role-ico" class="fa-solid fa-user-secret"></i></div>
+                  <div style="min-width:0">
+                    <div class="role-name" id="role-name">—</div>
+                    <div class="small" id="role-desc" style="color:#cbd5e1;margin-top:4px">—</div>
+                  </div>
+                </div>
+                <div class="allies" id="allies" hidden><b>Спільники</b><span id="allies-list"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action -->
+        <div class="card" id="action-card">
+          <div class="card-title">
+            <h3><i id="action-ico" class="fa-solid fa-crosshairs" style="color:var(--red)"></i><span id="action-title">Панель кімнати</span></h3>
+            <span class="small muted" id="action-sub">Лобі</span>
+          </div>
+
+          <div id="lobby-box">
+            <div class="row" style="margin-bottom:10px">
+              <span class="small muted" id="count-label" style="font-weight:700"></span>
+              <div class="row" style="gap:8px">
+                <button class="btn" id="btn-ready">Готовий</button>
+                <button class="btn btn-red" id="btn-start" hidden>Почати гру</button>
+              </div>
+            </div>
+            <p class="small muted" id="lobby-hint" style="margin:0 0 8px"></p>
+          </div>
+
+          <div id="active-box" hidden>
+            <p class="prompt" id="prompt"></p>
+            <div class="seg" id="mode-switch" hidden></div>
+            <div class="targets" id="targets"></div>
+            <div class="notes" id="notes" hidden></div>
+          </div>
+        </div>
+
+        <!-- Players -->
+        <div class="card" id="players-card">
+          <div class="card-title">
+            <h3 class="muted" style="font-size:12px">Гравці в кімнаті</h3>
+            <span class="small muted">Живі / Загиблі</span>
+          </div>
+          <div class="players" id="players"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="pane" data-pane="chat">
+        <div class="card chat-card" id="chat-card">
+          <div class="card-title"><h3><i class="fa-solid fa-comments" style="color:var(--red)"></i>Загальний чат</h3><span class="small muted" id="chat-state"></span></div>
+          <div class="scroll" id="chat"></div>
+          <div style="margin-top:8px" id="cry-wrap" hidden>
+            <button class="btn glow" style="width:100%" id="btn-cry"><i class="fa-solid fa-ghost"></i> Передсмертне слово (1 раз)</button>
+          </div>
+          <div class="reply-bar" id="reply-bar" hidden><div><b id="reply-name"></b><span id="reply-text"></span></div><button type="button" id="reply-x" aria-label="Скасувати відповідь">×</button></div>
+          <form class="chat-form" id="chat-form">
+            <input class="field" id="chat-input" maxlength="300" placeholder="Напишіть повідомлення…" autocomplete="off">
+            <button class="btn btn-red" id="chat-send" type="submit" aria-label="Надіслати"><i class="fa-solid fa-paper-plane"></i></button>
+          </form>
+        </div>
+      </div>
+      <div class="pane" data-pane="log">
+        <div class="card log-card">
+          <div class="card-title"><h3><i class="fa-solid fa-scroll" style="color:var(--amber)"></i>Хроніки міста</h3></div>
+          <div class="scroll" id="log" style="gap:0"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav id="tabbar">
+  <button class="tab active" data-tab="game"><i class="fa-solid fa-masks-theater"></i>Гра<span class="dot n" id="game-dot" hidden></span></button>
+  <button class="tab" data-tab="chat"><i class="fa-solid fa-comments"></i>Чат<span class="dot n" id="chat-dot" hidden></span></button>
+  <button class="tab" data-tab="log"><i class="fa-solid fa-scroll"></i>Хроніки</button>
+</nav>
+
+<!-- Game over -->
+<div class="modal" id="modal-end">
+  <div class="card">
+    <div class="victory-ico"><i class="fa-solid fa-trophy"></i></div>
+    <h2 class="hd" id="end-title" style="font-size:26px;text-transform:uppercase">Кінець гри</h2>
+    <p class="muted" id="end-sub" style="margin:8px 0 0"></p>
+    <div class="reveal" id="reveal"></div>
+    <button class="btn btn-red" style="width:100%" id="btn-end-main">Закрити</button>
+  </div>
+</div>
+
+<!-- Death cry -->
+<div class="modal" id="modal-cry">
+  <div class="card">
+    <div style="font-size:32px;color:#f87171"><i class="fa-solid fa-ghost"></i></div>
+    <h3 class="hd" style="font-size:20px;margin:6px 0">Передсмертне слово</h3>
+    <p class="muted small">Останній крик побачать усі в чаті.</p>
+    <textarea id="cry-input" class="field" rows="3" maxlength="120" placeholder="Ваші останні слова…" style="margin:10px 0"></textarea>
+    <div class="row" style="flex-wrap:nowrap">
+      <button class="btn" style="flex:1" id="cry-cancel">Скасувати</button>
+      <button class="btn btn-red" style="flex:1" id="cry-send">Надіслати</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { getDatabase, ref, set, get, update, onValue, push, remove, onDisconnect, query, limitToLast } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyANfg7weOhSACxjpFCashWmuFXOnCUurvo",
+  authDomain: "mafia-ed696.firebaseapp.com",
+  databaseURL: "https://mafia-ed696-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "mafia-ed696",
+  storageBucket: "mafia-ed696.firebasestorage.app",
+  messagingSenderId: "496742110558",
+  appId: "1:496742110558:web:1e21746cace1d5120eebcf",
+  measurementId: "G-NNHMP1V51E"
+};
+
+/* ---------- Константи ---------- */
+const ROOT = 'mafia';
+const MIN_PLAYERS = 4;
+const DUR = { night: 45000, day_discussion: 60000, day_voting: 30000 };
+const MAFIA_TEAM = ['DON', 'MAFIA'];
+const NIGHT_ROLES = ['DON', 'MAFIA', 'DOCTOR', 'DETECTIVE', 'MANIAC'];
+const ROLES = {
+  CITIZEN:   { name: 'Мирний житель', icon: 'fa-user-group',  color: '#34d399', desc: 'Шукає мафію вдень та голосує.' },
+  DOCTOR:    { name: 'Лікар',         icon: 'fa-user-doctor', color: '#60a5fa', desc: 'Щоночі лікує одного гравця (можна себе).', prompt: 'Кого лікуємо цієї ночі?' },
+  DETECTIVE: { name: 'Комісар',       icon: 'fa-user-shield', color: '#fbbf24', desc: 'Щоночі або перевіряє гравця (мафія чи ні), або стріляє в нього.', prompt: 'Кого перевірити?' },
+  DON:       { name: 'Дон Мафії',     icon: 'fa-crown',       color: '#ef4444', desc: 'Ватажок мафії. Його вибір жертви вирішальний.', prompt: 'Оберіть жертву мафії' },
+  MAFIA:     { name: 'Мафіозі',       icon: 'fa-user-secret', color: '#fb7185', desc: 'Допомагає Дону знищувати місто.', prompt: 'Оберіть жертву мафії' },
+  MANIAC:    { name: 'Маніяк',        icon: 'fa-skull',       color: '#a855f7', desc: 'Вбивця-одинак. Перемагає, лишившись сам.', prompt: 'Кого вбити цієї ночі?' },
+  SUICIDE:   { name: 'Самогубець',    icon: 'fa-ghost',       color: '#818cf8', desc: 'Перемагає, якщо його вигнали голосуванням.' }
+};
+const WIN_TEXT = {
+  mafia: ['Перемогла мафія!', 'Місто опинилося в руках мафії.'],
+  citizens: ['Перемогли мирні!', 'Усю мафію та маніяка знешкоджено.'],
+  maniac: ['Переміг маніяк!', 'Він єдиний, хто пережив цю новорічну ніч.'],
+  suicide: ['Самогубець переміг!', 'Його вигнали голосуванням — саме цього він і прагнув.'],
+  none: ['Нічия', 'Ніхто не вижив.']
+};
+
+/* ---------- Утиліти ---------- */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+const shuffle = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = (a) => a[Math.floor(Math.random() * a.length)];
+const avatarOf = (seed) => `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(seed)}`;
+const hhmm = (ts) => new Date(ts).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+const av = (p) => `<img src="${esc(p.avatar || avatarOf(p.name))}" alt="">`;
+function setHTML(el, html) { if (el._h !== html) { el._h = html; el.innerHTML = html; } }
+function toast(msg, tab) { const t = $('toast'); t.textContent = msg; toast._go = tab || null; t.classList.toggle('go', !!tab); t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), tab ? 4200 : 2800); }
+
+/* ---------- Стан ---------- */
+let app, auth, db, uid = null, offset = 0, connected = false;
+let players = {}, game = { phase: 'lobby' }, votes = {}, priv = null;
+let privAll = {}, actionsAll = {}, hostUnsubs = [];
+let entered = false, playersLoaded = false, selfCache = null, presenceMode = null;
+let myPick = null, flipped = false, busy = false, endDismissedFor = null, lastPhaseKey = null;
+const mq = matchMedia('(max-width:1023px)');
+let ghostIds = [];
+let gameLoaded = false, seenChat = null, unread = 0;
+let curTab = 'game', chatData = {}, logsData = {}, replyTo = null, detMode = 'check', flipT = null;
+const R = (p) => ref(db, p ? `${ROOT}/${p}` : ROOT);
+const nowS = () => Date.now() + offset;
+const isHost = () => game.hostId && game.hostId === uid;
+
+/* ---------- Старт ---------- */
+const configured = !String(firebaseConfig.apiKey).startsWith('ВСТАВТЕ');
+if (!configured) {
+  $('config-error').hidden = false;
+  $('login-form').querySelector('button').disabled = true;
+} else {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getDatabase(app);
+  onAuthStateChanged(auth, (u) => { if (u && !uid) { uid = u.uid; startListeners(); } });
+  signInAnonymously(auth).catch((e) => {
+    console.error(e);
+    toast('Помилка входу: увімкніть Anonymous у Firebase Authentication');
+  });
+}
+
+/* ---------- Слухачі ---------- */
+function startListeners() {
+  const warn = (e) => console.warn('RTDB:', e && e.message);
+  onValue(ref(db, '.info/serverTimeOffset'), (s) => { offset = s.val() || 0; });
+  onValue(ref(db, '.info/connected'), (s) => { connected = !!s.val(); if (connected) registerPresence(); });
+
+  onValue(R('players'), (s) => {
+    const raw = s.val() || {};
+    players = {}; ghostIds = [];
+    Object.entries(raw).forEach(([k, p]) => {
+      if (p && typeof p === 'object' && p.name) players[k] = { ...p, id: k };
+      else ghostIds.push(k); /* порожні записи після onDisconnect */
+    });
+    playersLoaded = true;
+    if (players[uid]) { selfCache = players[uid]; if (!entered) { entered = true; registerPresence(); } }
+    afterState();
+  }, warn);
+
+  onValue(R('game'), (s) => {
+    game = s.val() || { phase: 'lobby' };
+    if (!game.phase) game.phase = 'lobby';
+    gameLoaded = true;
+    afterState();
+  }, warn);
+
+  onValue(R('votes'), (s) => { votes = s.val() || {}; render(); hostTick(); }, warn);
+  onValue(R('private/' + uid), (s) => { priv = s.val(); render(); }, warn);
+
+  onValue(query(R('chat'), limitToLast(80)), (s) => {
+    chatData = s.val() || {};
+    trackChat();
+    renderChat();
+  }, warn);
+  onValue(query(R('logs'), limitToLast(80)), (s) => { logsData = s.val() || {}; renderLog(logsData); renderChat(); }, warn);
+
+  setInterval(updateTimer, 250);
+  setInterval(hostTick, 1000);
+}
+
+function afterState() {
+  if (isHost()) {
+    const old = Object.values(players).filter((p) => p.isBot);
+    if (old.length) { const u = {}; old.forEach((b) => { u['players/' + b.id] = null; }); update(R(), u).catch(() => {}); }
+  }
+  if (isHost() && game.v === 2 && game.phase !== 'lobby' && playersLoaded) {
+    const late = game.roster ? Object.values(players).filter((p) => !game.roster[p.id]) : [];
+    if (late.length) { const u = {}; late.forEach((b) => { u['players/' + b.id] = null; }); update(R(), u).catch(() => {}); }
+  }
+  if (entered && playersLoaded && gameLoaded && !players[uid] && game.phase !== 'lobby') {
+    entered = false; presenceMode = null; selfCache = null;
+    try { onDisconnect(R('players/' + uid)).cancel().catch(() => {}); } catch (_) {}
+    toast('Гра вже триває — дочекайтесь завершення раунду.');
+  }
+  if (isHost() && ghostIds.length) { const u = {}; ghostIds.forEach((k) => { u['players/' + k] = null; }); ghostIds = []; update(R(), u).catch(() => {}); }
+  hostMigrate();
+  syncHostListeners();
+  const mode = game.phase === 'lobby' ? 'lobby' : 'game';
+  if (entered && connected && presenceMode && presenceMode !== mode) registerPresence();
+  const key = game.phase + ':' + (game.day || 0);
+  if (key !== lastPhaseKey) { onPhaseChanged(lastPhaseKey, key); lastPhaseKey = key; }
+  render();
+  hostTick();
+}
+
+function onPhaseChanged(prev, key) {
+  if (prev === null) return;
+  myPick = myPick && myPick.key === 'n' + game.day ? myPick : null;
+  if (game.phase === 'night') detMode = 'check';
+  if (game.phase === 'night') playSound('night');
+  else if (game.phase === 'day_discussion' || game.phase === 'day_voting') playSound('gong');
+  const say = { night: `🌙 Настала ніч ${game.day}`, day_discussion: '☀️ День: обговорюйте в чаті', day_voting: '🗳 Голосування! Оберіть, кого вигнати', ended: '🏁 Гру завершено' };
+  if (entered && say[game.phase]) toast(say[game.phase]);
+  if (entered && mq.matches) {
+    /* на телефоні самі перемикаємо потрібну вкладку */
+    if (game.phase === 'day_discussion') setTab('chat');
+    else if (['night', 'day_voting', 'ended'].includes(game.phase)) setTab('game');
+  }
+  if (entered && (game.phase === 'night' || game.phase === 'day_voting')) {
+    try { navigator.vibrate && navigator.vibrate(120); } catch (_) {}
+    setTimeout(() => { if (curTab === 'game') $('action-card').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200);
+  }
+}
+
+/* ---------- Присутність ---------- */
+async function registerPresence() {
+  if (!entered || !connected || !uid) return;
+  try {
+    const [gs, ps] = await Promise.all([get(R('game/phase')), get(R('players/' + uid))]);
+    const mode = (gs.val() || 'lobby') === 'lobby' ? 'lobby' : 'game';
+    const pr = R('players/' + uid);
+    if (mode === 'lobby') {
+      await onDisconnect(pr).remove();
+      if (ps.exists()) await update(pr, { online: true });
+      else if (selfCache) await set(pr, { ...selfCache, online: true });
+    } else {
+      if (!ps.exists()) { entered = false; render(); return; }
+      await onDisconnect(pr).cancel();
+      await onDisconnect(pr).update({ online: false });
+      await update(pr, { online: true });
+    }
+    presenceMode = mode;
+  } catch (e) { console.warn(e); }
+}
+
+/* ---------- Хост ---------- */
+function hostMigrate() {
+  if (!entered || !playersLoaded) return;
+  const hid = game.hostId;
+  if (hid && players[hid] && players[hid].online !== false) return;
+  const cands = Object.values(players).filter((p) => !p.isBot && p.online !== false)
+    .sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+  if (cands[0] && cands[0].id === uid && hid !== uid) set(R('game/hostId'), uid).catch(() => {});
+}
+
+function syncHostListeners() {
+  if (isHost() && !hostUnsubs.length) {
+    hostUnsubs.push(onValue(R('private'), (s) => { privAll = s.val() || {}; hostTick(); }, () => {}));
+    hostUnsubs.push(onValue(R('actions'), (s) => { actionsAll = s.val() || {}; hostTick(); }, () => {}));
+  } else if (!isHost() && hostUnsubs.length) {
+    hostUnsubs.forEach((u) => u()); hostUnsubs = []; privAll = {}; actionsAll = {};
+  }
+}
+
+const isPart = (p) => game.v !== 2 || !!(game.roster && game.roster[p.id]);
+const aliveList = () => Object.values(players).filter((p) => p.alive && isPart(p));
+const roleOf = (id) => privAll[id] && privAll[id].role;
+
+function allNightDone() {
+  const alive = aliveList().filter((p) => p.online !== false);
+  const donAlive = aliveList().some((p) => roleOf(p.id) === 'DON');
+  const need = alive.filter((p) => {
+    const r = roleOf(p.id);
+    return ['DON', 'DOCTOR', 'DETECTIVE', 'MANIAC'].includes(r) || (r === 'MAFIA' && !donAlive);
+  });
+  return need.length > 0 && need.every((p) => actionsAll[p.id]);
+}
+function allVoted() {
+  const alive = aliveList().filter((p) => p.online !== false);
+  return alive.length > 0 && alive.every((p) => votes[p.id]);
+}
+
+async function hostTick(force) {
+  if (!isHost() || busy || !playersLoaded) return;
+  if (!['night', 'day_discussion', 'day_voting'].includes(game.phase)) return;
+  let go = force === true || (game.endsAt && nowS() >= game.endsAt);
+  if (!go && game.phase === 'night') go = allNightDone();
+  if (!go && game.phase === 'day_voting') go = allVoted();
+  if (!go) return;
+  busy = true;
+  try { await advancePhase(); } catch (e) { console.error(e); toast('Помилка рушія: ' + e.message); } finally { busy = false; }
+}
+
+function buildRoles(n) {
+  const r = ['DON', 'DOCTOR'];
+  if (n >= 5) r.push('DETECTIVE');
+  if (n >= 6) r.push('MANIAC');
+  if (n >= 7) r.push('MAFIA');
+  if (n >= 8) r.push('SUICIDE');
+  if (n >= 10) r.push('MAFIA');
+  while (r.length < n) r.push('CITIZEN');
+  return shuffle(r);
+}
+
+async function startGame() {
+  if (!isHost()) return;
+  const list = Object.values(players);
+  if (list.length < MIN_PLAYERS) return toast(`Потрібно мінімум ${MIN_PLAYERS} гравці (зараз ${list.length}).`);
+  const notReady = list.filter((p) => p.id !== uid && !p.ready);
+  if (notReady.length) return toast('Не всі готові: ' + notReady.map((p) => p.name).join(', '));
+  const roles = buildRoles(list.length);
+  const assign = list.map((p, i) => ({ p, role: roles[i] }));
+  const team = assign.filter((a) => MAFIA_TEAM.includes(a.role));
+  const upd = {};
+  assign.forEach((a) => {
+    const mates = MAFIA_TEAM.includes(a.role) ? team.filter((t) => t.p.id !== a.p.id) : [];
+    upd[`private/${a.p.id}`] = { role: a.role, mates: mates.map((m) => m.p.name), mateIds: mates.map((m) => m.p.id) };
+    upd[`players/${a.p.id}/alive`] = true;
+    upd[`players/${a.p.id}/hasUsedDeathCry`] = false;
+  });
+  upd['game/roster'] = Object.fromEntries(assign.map((a) => [a.p.id, true])); upd['game/v'] = 2; upd['game/phase'] = 'night'; upd['game/day'] = 1; upd['game/endsAt'] = nowS() + DUR.night;
+  upd['game/winner'] = null; upd['game/reveal'] = null; upd['game/endedAt'] = null; upd['game/hostId'] = uid; upd['game/startedAt'] = nowS() - 1000;
+  upd.actions = null; upd.votes = null; upd.chat = null;
+  await update(R(), upd);
+  logs(['— Нова гра —', 'Гру розпочато! Ролі роздано. Настала ніч 1.']);
+}
+
+function logKeyed(upd, texts) {
+  texts.forEach((t, i) => { const k = push(R('logs')).key; upd[`logs/${k}`] = { t, ts: nowS() + i }; });
+}
+function logs(texts) { const u = {}; logKeyed(u, texts); update(R(), u).catch(() => {}); }
+
+function checkWin(ids) {
+  if (!ids.length) return 'none';
+  const m = ids.filter((i) => MAFIA_TEAM.includes(roleOf(i))).length;
+  const k = ids.filter((i) => roleOf(i) === 'MANIAC').length;
+  if (m === 0 && k === 0) return 'citizens';
+  if (k === 0 && m >= ids.length - m) return 'mafia';
+  if (m === 0 && k > 0 && ids.length <= 2) return 'maniac';
+  if (m > 0 && k > 0 && ids.length <= 2) return 'none';
+  return null;
+}
+
+function endGame(upd, texts, win) {
+  const reveal = {};
+  Object.entries(players).forEach(([id, p]) => {
+    if (!id || id === 'undefined' || !p) return;
+    reveal[id] = { name: String(p.name || '???'), role: roleOf(id) || 'CITIZEN' };
+  });
+  upd['game/phase'] = 'ended'; upd['game/winner'] = win; upd['game/endsAt'] = null;
+  upd['game/endedAt'] = Date.now(); upd['game/reveal'] = reveal;
+  upd.actions = null;
+  texts.push('Гру завершено. ' + WIN_TEXT[win][0]);
+}
+
+async function advancePhase() {
+  const g = game, upd = {}, texts = [];
+  const alivePl = aliveList();
+  const nm = (id) => (players[id] ? players[id].name : '?');
+  const rn = (id) => (ROLES[roleOf(id)] || ROLES.CITIZEN).name;
+  const noun = (n) => (n % 10 === 1 && n % 100 !== 11 ? 'гравець' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 'гравці' : 'гравців'));
+
+  if (g.phase === 'day_discussion') {
+    upd['game/phase'] = 'day_voting'; upd['game/endsAt'] = nowS() + DUR.day_voting; upd.votes = null;
+    texts.push('Починається голосування. Оберіть, кого вигнати.');
+  }
+  else if (g.phase === 'night') {
+    const cache = {};
+    const act = (id) => {
+      if (!(id in cache)) {
+        const a = actionsAll[id];
+        cache[id] = a ? a.target : null;
+      }
+      return cache[id];
+    };
+    const isAlive = (id) => id && players[id] && players[id].alive && isPart(players[id]);
+    const byRole = (r) => alivePl.filter((p) => roleOf(p.id) === r);
+    const order = [...byRole('DON'), ...byRole('MAFIA')];
+    let kt = null;
+    for (const p of order) { const t = act(p.id); if (isAlive(t)) { kt = t; break; } }
+    const man = byRole('MANIAC')[0];
+    const mt = man && isAlive(act(man.id)) ? act(man.id) : null;
+    const doc = byRole('DOCTOR')[0];
+    const saved = doc && isAlive(act(doc.id)) ? act(doc.id) : null;
+    const det = byRole('DETECTIVE')[0];
+    let shot = null;
+    if (det) {
+      const c = act(det.id), da = actionsAll[det.id];
+      if (isAlive(c)) {
+        if (da && da.mode === 'shoot') { shot = c; upd[`private/${det.id}/notes/n${g.day}`] = `Ніч ${g.day}: ви вистрілили в ${nm(c)}`; }
+        else upd[`private/${det.id}/notes/n${g.day}`] = `Ніч ${g.day}: ${nm(c)} — ${MAFIA_TEAM.includes(roleOf(c)) ? 'МАФІЯ' : 'не мафія'}`;
+      }
+    }
+    const dead = [...new Set([kt, mt, shot].filter(Boolean))].filter((v) => v !== saved);
+    dead.forEach((v) => { upd[`players/${v}/alive`] = false; });
+    if (dead.length) dead.forEach((v) => texts.push(`Вночі вбили: ${nm(v)}. Роль: ${rn(v)}.`));
+    else texts.push('Ця ніч минула без жертв.');
+    const left = alivePl.map((p) => p.id).filter((i) => !dead.includes(i));
+    const win = checkWin(left);
+    if (win) endGame(upd, texts, win);
+    else {
+      upd['game/phase'] = 'day_discussion'; upd['game/endsAt'] = nowS() + DUR.day_discussion;
+      upd.actions = null; texts.push(`Настав день ${g.day}.`, `Залишилось ${left.length} ${noun(left.length)}, серед них: ${left.map(nm).join(', ')}.`);
+    }
+  }
+  else if (g.phase === 'day_voting') {
+    const tally = {};
+    alivePl.forEach((p) => {
+      const t = votes[p.id];
+      if (t && players[t] && players[t].alive && isPart(players[t])) tally[t] = (tally[t] || 0) + 1;
+    });
+    const top = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+    const out = top.length && (top.length === 1 || top[0][1] > top[1][1]) ? top[0][0] : null;
+    let win = null;
+    let left = alivePl.map((p) => p.id);
+    if (out) {
+      upd[`players/${out}/alive`] = false;
+      left = left.filter((i) => i !== out);
+      texts.push(`Місто вигнало: ${nm(out)}. Роль: ${rn(out)}.`);
+      if (roleOf(out) === 'SUICIDE') win = 'suicide';
+    } else texts.push('Голоси розділились — ніхто не вибув.');
+    if (!win) win = checkWin(left);
+    if (win) endGame(upd, texts, win);
+    else {
+      upd['game/phase'] = 'night'; upd['game/day'] = (g.day || 1) + 1; upd['game/endsAt'] = nowS() + DUR.night;
+      upd.actions = null; upd.votes = null; texts.push(`Настала ніч ${(g.day || 1) + 1}.`);
+    }
+  }
+  logKeyed(upd, texts);
+  await update(R(), upd);
+}
+
+async function resetToLobby() {
+  if (!isHost()) return;
+  const upd = {};
+  Object.values(players).forEach((p) => {
+    if (p.online === false) { upd[`players/${p.id}`] = null; return; }
+    upd[`players/${p.id}/alive`] = true;
+    upd[`players/${p.id}/ready`] = false;
+    upd[`players/${p.id}/hasUsedDeathCry`] = false;
+  });
+  upd['game/v'] = null; upd['game/roster'] = null; upd['game/phase'] = 'lobby'; upd['game/day'] = 0; upd['game/endsAt'] = null;
+  upd['game/winner'] = null; upd['game/reveal'] = null; upd['game/endedAt'] = null; upd['game/startedAt'] = null;
+  upd.private = null; upd.actions = null; upd.votes = null;
+  logKeyed(upd, ['Кімната знову у лобі.']);
+  await update(R(), upd);
+}
+
+/* ---------- Дії гравця ---------- */
+$('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!uid) return toast('Підключення до Firebase… спробуйте за секунду');
+  const name = $('nick').value.trim();
+  if (!name) return;
+  if (!gameLoaded) return toast('Підключення до кімнати… спробуйте за секунду');
+  if (game.phase !== 'lobby') return toast('Гра вже триває — дочекайтесь завершення.');
+  let livePhase = 'lobby';
+  try { livePhase = (await get(R('game/phase'))).val() || 'lobby'; } catch (_) {}
+  if (livePhase !== 'lobby') return toast('Гра вже триває — дочекайтесь завершення.');
+  selfCache = { id: uid, name, avatar: avatarOf(name), ready: false, alive: true, online: true, joinedAt: Date.now(), hasUsedDeathCry: false };
+  try {
+    await set(R('players/' + uid), selfCache);
+    entered = true;
+    try { localStorage.setItem('mafia_nick', name); } catch (_) {}
+    await registerPresence();
+    logs([`${name} увійшов(ла) у кімнату.`]);
+    render();
+  } catch (err) { console.error(err); toast('Не вдалось увійти: можливо, гра вже триває або заборонено правилами бази'); }
+});
+
+$('user-chip').addEventListener('click', async () => {
+  if (!entered || !confirm('Вийти з кімнати?')) return;
+  const pr = R('players/' + uid);
+  try { await onDisconnect(pr).cancel(); await remove(pr); } catch (_) {}
+  entered = false; presenceMode = null; selfCache = null; render();
+});
+
+$('btn-ready').addEventListener('click', () => {
+  const p = players[uid]; if (!p) return;
+  set(R(`players/${uid}/ready`), !p.ready);
+});
+$('btn-start').addEventListener('click', startGame);
+$('btn-skip').addEventListener('click', () => hostTick(true));
+
+$('targets').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-id]'); if (!b) return;
+  const id = b.dataset.id;
+  const me = players[uid]; if (!me || !me.alive) return;
+  playSound('gong');
+  try { navigator.vibrate && navigator.vibrate(15); } catch (_) {}
+  if (game.phase === 'night') {
+    const isDet = priv && priv.role === 'DETECTIVE';
+    myPick = { key: 'n' + game.day, target: id, mode: detMode };
+    set(R('actions/' + uid), isDet ? { target: id, mode: detMode } : { target: id }).catch(() => toast('Не вдалося зберегти вибір'));
+    renderAction(); renderPhaseBar();
+  } else if (game.phase === 'day_voting') {
+    set(R('votes/' + uid), id).catch(() => toast('Не вдалося проголосувати'));
+  }
+});
+
+$('flip').addEventListener('click', () => {
+  if (!priv || !priv.role) return;
+  flipped = !flipped;
+  $('flip-in').classList.toggle('flipped', flipped);
+  clearTimeout(flipT);
+  if (flipped) flipT = setTimeout(() => { flipped = false; $('flip-in').classList.remove('flipped'); }, 7000);
+});
+
+$('mode-switch').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-mode]'); if (!b) return;
+  detMode = b.dataset.mode;
+  if (myPick && myPick.key === 'n' + game.day) {
+    myPick.mode = detMode;
+    set(R('actions/' + uid), { target: myPick.target, mode: detMode }).catch(() => toast('Не вдалося зберегти вибір'));
+  }
+  renderAction(); renderPhaseBar();
+});
+
+/* чат */
+$('chat-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const inp = $('chat-input'), text = inp.value.trim();
+  if (!text || !entered || inp.disabled) return;
+  const msg = { uid, name: players[uid].name, text, ts: nowS() };
+  if (replyTo) msg.reply = { name: replyTo.name, text: replyTo.text };
+  inp.value = ''; setReply(null);
+  try { await push(R('chat'), msg); }
+  catch (_) { toast('Не вдалося надіслати'); }
+});
+$('btn-cry').addEventListener('click', () => { $('modal-cry').classList.add('open'); $('cry-input').focus(); });
+$('cry-cancel').addEventListener('click', () => $('modal-cry').classList.remove('open'));
+$('cry-send').addEventListener('click', async () => {
+  const text = $('cry-input').value.trim(); if (!text) return;
+  const me = players[uid]; if (!me || me.alive || me.hasUsedDeathCry) return;
+  await set(R(`players/${uid}/hasUsedDeathCry`), true);
+  await push(R('chat'), { uid, name: me.name, text, ts: nowS(), kind: 'cry' });
+  $('cry-input').value = ''; $('modal-cry').classList.remove('open');
+});
+
+$('btn-end-main').addEventListener('click', async () => {
+  if (isHost()) await resetToLobby();
+  else { endDismissedFor = game.endedAt; $('modal-end').classList.remove('open'); }
+});
+
+/* вкладки */
+function setTab(name) {
+  curTab = name;
+  document.querySelectorAll('.pane').forEach((p) => p.classList.toggle('active', p.dataset.pane === name));
+  document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === name));
+  window.scrollTo({ top: 0 });
+  if (name === 'chat') { unread = 0; updateUnread(); const c = $('chat'); c.scrollTop = c.scrollHeight; }
+  if (entered) renderPhaseBar();
+}
+function updateUnread() { const d = $('chat-dot'); d.hidden = !unread; d.textContent = unread > 9 ? '9+' : unread; }
+function trackChat() {
+  const keys = Object.keys(chatData);
+  if (seenChat === null) { seenChat = new Set(keys); return; }
+  keys.forEach((k) => {
+    if (seenChat.has(k)) return;
+    seenChat.add(k);
+    const m = chatData[k];
+    if (!entered || !m || m.uid === uid || !mq.matches || curTab === 'chat') return;
+    unread++; updateUnread();
+    toast(`💬 ${m.name}: ${String(m.text).slice(0, 60)}`, 'chat');
+  });
+}
+$('toast').addEventListener('click', () => { if (toast._go) { setTab(toast._go); $('toast').classList.remove('show'); } });
+$('pb-hint').addEventListener('click', (e) => { const g = e.currentTarget._go; if (g) { setTab(g); if (g === 'game') setTimeout(() => $('action-card').scrollIntoView({ behavior: 'smooth', block: 'start' }), 50); } });
+document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => setTab(t.dataset.tab)));
+
+/* відповіді в чаті */
+function setReply(r) {
+  replyTo = r;
+  $('reply-bar').hidden = !r;
+  if (r) { $('reply-name').textContent = r.name; $('reply-text').textContent = r.text; $('chat-input').focus(); }
+}
+$('reply-x').addEventListener('click', () => setReply(null));
+$('chat').addEventListener('click', (e) => {
+  const b = e.target.closest('.rp'); if (!b) return;
+  const m = chatData[b.dataset.k]; if (!m) return;
+  if ($('chat-input').disabled) return toast('Зараз чат закритий');
+  setReply({ name: m.name, text: String(m.text).slice(0, 80) });
+});
+
+mq.addEventListener('change', () => { if (!mq.matches) { document.querySelectorAll('.pane').forEach((p) => p.classList.remove('active')); document.querySelector('[data-pane="game"]').classList.add('active'); } renderPhaseBar(); });
+
+/* застрягла кімната */
+const roomAbandoned = () => game.phase !== 'lobby' && Object.values(players).every((p) => p.online === false);
+$('btn-reset-room').addEventListener('click', async () => {
+  if (!uid || !roomAbandoned()) return toast('У кімнаті є активні гравці');
+  try {
+    await set(R('game/hostId'), uid);
+    await update(R(), {
+      players: null, private: null, actions: null, votes: null, chat: null,
+      'game/v': null, 'game/roster': null, 'game/phase': 'lobby', 'game/day': 0, 'game/endsAt': null, 'game/winner': null,
+      'game/reveal': null, 'game/endedAt': null, 'game/startedAt': null
+    });
+    toast('Кімнату скинуто, заходьте');
+  } catch (e) { toast('Не вдалося скинути кімнату'); }
+});
+
+/* ---------- Рендер ---------- */
+function render() {
+  const showGame = entered && !!players[uid] || entered;
+  $('screen-login').hidden = showGame;
+  $('screen-game').hidden = !showGame;
+  $('phasebar').hidden = !showGame;
+  $('user-chip').hidden = !showGame;
+  document.body.classList.toggle('in-room', showGame);
+
+  const note = $('login-note');
+  const locked = !gameLoaded || game.phase !== 'lobby';
+  note.textContent = !showGame && gameLoaded && game.phase !== 'lobby' ? '⏳ Гра вже триває. Зачекайте на завершення раунду — тоді зможете увійти.' : '';
+  if (configured) { $('login-form').querySelector('button').disabled = locked; $('login-label').textContent = !gameLoaded ? 'Підключення…' : game.phase !== 'lobby' ? 'Гра триває…' : 'Увійти в кімнату'; }
+  $('btn-reset-room').hidden = showGame || !roomAbandoned();
+  if (!$('nick').value) { try { $('nick').value = localStorage.getItem('mafia_nick') || ''; } catch (_) {} }
+  if (!showGame) return;
+
+  const me = players[uid] || selfCache || {};
+  $('chip-name').textContent = me.name || '';
+  if (me.avatar) $('chip-av').src = me.avatar;
+
+  const dark = !['day_discussion', 'day_voting'].includes(game.phase);
+  document.documentElement.setAttribute('data-phase', dark ? 'night' : 'day');
+  $('meta-theme').setAttribute('content', dark ? '#0b1329' : '#f1f5f9');
+
+  renderPhaseBar(); renderRole(); renderAction(); renderPlayers(); renderChatState(); renderChat(); renderEnd();
+}
+
+function renderPhaseBar() {
+  const ph = game.phase, t = $('phase-title'), i = $('phase-ico');
+  const map = {
+    lobby: ['ЛОБІ', 'fa-users'],
+    night: [`НІЧ ${game.day}`, 'fa-moon'],
+    day_discussion: [`ДЕНЬ ${game.day} · ОБГОВОРЕННЯ`, 'fa-sun'],
+    day_voting: ['ГОЛОСУВАННЯ', 'fa-gavel'],
+    ended: ['КІНЕЦЬ ГРИ', 'fa-flag-checkered']
+  };
+  const [txt, ic] = map[ph] || map.lobby;
+  t.textContent = txt; i.className = 'fa-solid ' + ic;
+  const timed = ['night', 'day_discussion', 'day_voting'].includes(ph);
+  $('timer').hidden = !timed;
+  if (!timed) $('pb-fill').style.width = '0%';
+  $('btn-skip').hidden = !(timed && isHost());
+  const h = phaseHint(), hb = $('pb-hint');
+  const jump = mq.matches && h.go && curTab !== h.go;
+  hb.textContent = h.t + (jump ? (h.go === 'chat' ? '  → до чату' : '  → до дій') : '');
+  hb.classList.toggle('act', h.act); hb.classList.toggle('go', !!jump); hb._go = jump ? h.go : null;
+  const gd = $('game-dot'); gd.textContent = '1'; gd.hidden = !(mq.matches && h.act && curTab !== 'game');
+  updateTimer();
+}
+
+function phaseHint() {
+  const ph = game.phase, me = players[uid];
+  if (ph === 'lobby') return { t: 'Чекаємо гравців. Натисніть «Готовий» — хост запустить гру.', act: false };
+  if (ph === 'ended') return { t: 'Гру завершено. Хост повертає всіх у лобі.', act: false };
+  if (!me || !me.alive) return { t: '👻 Ви загинули — тепер ви спостерігач.', act: false };
+  if (ph === 'night') {
+    const role = priv && priv.role;
+    if (role && NIGHT_ROLES.includes(role)) {
+      const done = myPick && myPick.key === 'n' + game.day;
+      return done ? { t: '✓ Вибір збережено. Його можна змінити до кінця ночі.', act: false }
+                  : { t: role === 'DETECTIVE' ? '🌙 Ваш хід: перевірте гравця або застреліть.' : '🌙 Ваш хід: оберіть ціль.', act: true, go: 'game' };
+    }
+    return { t: '🌙 Ніч: ви спите. Чекайте ранку, чат закритий.', act: false };
+  }
+  if (ph === 'day_discussion') return { t: '☀️ Обговорення: пишіть у чаті, кого підозрюєте. Голосування почнеться, коли вийде час.', act: false, go: 'chat' };
+  if (ph === 'day_voting') return votes[uid]
+    ? { t: '✓ Голос враховано. Його можна змінити до кінця таймера.', act: false, go: 'chat' }
+    : { t: '🗳 Час голосувати! Оберіть, кого вигнати.', act: true, go: 'game' };
+  return { t: '', act: false };
+}
+
+function updateTimer() {
+  if (!game.endsAt || $('timer').hidden) return;
+  const s = Math.max(0, Math.ceil((game.endsAt - nowS()) / 1000));
+  $('timer-txt').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  $('timer').classList.toggle('warn', s <= 10);
+  const f = $('pb-fill'), dur = (DUR[game.phase] || 1) / 1000;
+  f.style.width = Math.min(100, 100 * Math.max(0, (game.endsAt - nowS()) / 1000) / dur) + '%';
+  f.classList.toggle('warn', s <= 10);
+}
+
+function renderRole() {
+  const me = players[uid];
+  const has = priv && priv.role;
+  if (!has && flipped) { flipped = false; $('flip-in').classList.remove('flipped'); }
+  $('front-title').textContent = has ? 'Роль роздано! Торкніться картки' : 'Очікуємо старт гри';
+  $('front-sub').textContent = has ? 'Картка сама сховається через 7 с' : `Мінімум ${MIN_PLAYERS} гравці. Ролі роздаються автоматично.`;
+  const st = $('role-status');
+  if (!has) { st.textContent = 'Очікування'; st.className = 'pill ok'; }
+  else if (me && !me.alive) { st.textContent = 'Загинув'; st.className = 'pill bad'; }
+  else { st.textContent = 'Живий'; st.className = 'pill ok'; }
+  if (!has) return;
+  const r = ROLES[priv.role] || ROLES.CITIZEN;
+  $('role-name').textContent = r.name; $('role-name').style.color = r.color;
+  $('role-desc').textContent = r.desc;
+  $('role-ico').className = 'fa-solid ' + r.icon; $('role-ico').style.color = r.color;
+  $('role-icobox').style.borderColor = r.color;
+  $('role-back').style.borderColor = r.color;
+  const mates = priv.mates || [];
+  $('allies').hidden = !mates.length;
+  $('allies-list').textContent = mates.join(', ');
+}
+
+function renderAction() {
+  const ph = game.phase, me = players[uid];
+  const lobby = ph === 'lobby';
+  $('lobby-box').hidden = !lobby;
+  $('active-box').hidden = lobby;
+  const title = $('action-title'), sub = $('action-sub'), ico = $('action-ico');
+
+  if (lobby) {
+    title.textContent = 'Лобі'; sub.textContent = 'Очікування гравців'; ico.className = 'fa-solid fa-users';
+    const list = Object.values(players);
+    $('count-label').textContent = `Гравців: ${list.length}`;
+    const rb = $('btn-ready');
+    const ready = !!(me && me.ready);
+    rb.textContent = ready ? 'Готовий ✓' : 'Готовий';
+    rb.className = 'btn ' + (ready ? 'btn-green' : '');
+    $('btn-start').hidden = !isHost();
+    const hostName = game.hostId && players[game.hostId] ? players[game.hostId].name : '…';
+    $('lobby-hint').textContent = isHost()
+      ? `Ви хост. Потрібно ≥${MIN_PLAYERS} гравців, усі інші мають натиснути «Готовий».`
+      : `Хост: ${hostName}. Натисніть «Готовий» і чекайте старту.`;
+    return;
+  }
+
+  const prompt = $('prompt'), grid = $('targets');
+  let html = '', msg = '', seg = '';
+  if (ph === 'ended') { title.textContent = 'Гру завершено'; sub.textContent = ''; ico.className = 'fa-solid fa-flag-checkered'; msg = 'Раунд завершено.'; }
+  else if (!me || !me.alive) { title.textContent = 'Ви спостерігаєте'; sub.textContent = ''; ico.className = 'fa-solid fa-ghost'; msg = 'Ви загинули. Можна лише спостерігати.'; }
+  else if (ph === 'night') {
+    const role = priv && priv.role;
+    title.textContent = 'Нічна дія'; sub.textContent = `Ніч ${game.day}`; ico.className = 'fa-solid fa-moon';
+    if (role && NIGHT_ROLES.includes(role)) {
+      const shoot = role === 'DETECTIVE' && detMode === 'shoot';
+      msg = shoot ? 'Кого застрелити?' : ROLES[role].prompt;
+      if (role === 'DETECTIVE') seg = `<button data-mode="check" class="${shoot ? '' : 'on'}"><i class="fa-solid fa-magnifying-glass"></i> Перевірити</button><button data-mode="shoot" class="${shoot ? 'on' : ''}"><i class="fa-solid fa-crosshairs"></i> Вистрілити</button>`;
+      const mates = priv.mateIds || [];
+      const sel = myPick && myPick.key === 'n' + game.day ? myPick.target : null;
+      html = aliveList().filter((p) => (role === 'DOCTOR' || p.id !== uid) && !mates.includes(p.id))
+        .map((p) => `<button class="tgt ${sel === p.id ? 'sel' : ''}" data-id="${esc(p.id)}">${av(p)}${esc(p.name)}${p.id === uid ? ' (ви)' : ''}</button>`).join('');
+    } else msg = 'Ніч. Ви спите…';
+  }
+  else if (ph === 'day_voting') {
+    title.textContent = 'Голосування'; sub.textContent = `День ${game.day}`; ico.className = 'fa-solid fa-gavel';
+    msg = 'Оберіть, кого вигнати з міста:';
+    const cnt = {}; Object.entries(votes).forEach(([v, t]) => { if (players[v] && players[v].alive) cnt[t] = (cnt[t] || 0) + 1; });
+    html = aliveList().filter((p) => p.id !== uid)
+      .map((p) => `<button class="tgt ${votes[uid] === p.id ? 'sel' : ''}" data-id="${esc(p.id)}">${av(p)}${esc(p.name)}${cnt[p.id] ? `<span class="cnt">${cnt[p.id]}</span>` : ''}</button>`).join('');
+  }
+  else { title.textContent = 'Обговорення'; sub.textContent = `День ${game.day}`; ico.className = 'fa-solid fa-sun'; msg = 'Обговорюйте події ночі в чаті. Скоро голосування.'; }
+
+  prompt.textContent = msg;
+  const ms = $('mode-switch'); ms.hidden = !seg; setHTML(ms, seg);
+  setHTML(grid, html);
+
+  const notes = priv && priv.notes ? Object.keys(priv.notes).sort().map((k) => priv.notes[k]) : [];
+  const nb = $('notes');
+  nb.hidden = !notes.length;
+  setHTML(nb, notes.length ? `<b>Нотатки комісара</b><br>${notes.map(esc).join('<br>')}` : '');
+}
+
+function renderPlayers() {
+  const list = Object.values(players).sort((a, b) => (a.joinedAt || 0) - (b.joinedAt || 0));
+  const cnt = {}; Object.entries(votes).forEach(([v, t]) => { if (players[v] && players[v].alive) cnt[t] = (cnt[t] || 0) + 1; });
+  const voting = game.phase === 'day_voting';
+  setHTML($('players'), list.map((p) => `
+    <div class="pl ${p.alive ? '' : 'dead'}">
+      <img src="${esc(p.avatar || avatarOf(p.name))}" alt="">
+      <div style="min-width:0">
+        <div class="nm"><span>${esc(p.name)}</span>
+          ${p.id === uid ? '<span class="small" style="color:var(--red)">(ви)</span>' : ''}
+          ${p.id === game.hostId ? '<span class="tag h">хост</span>' : ''}
+          ${game.phase === 'lobby' && p.ready ? '<span class="tag">готовий</span>' : ''}
+          ${p.online === false ? '<span class="tag o">офлайн</span>' : ''}
+          ${voting && p.alive && cnt[p.id] ? `<span class="tag h">🗳 ${cnt[p.id]}</span>` : ''}
+        </div>
+        <div class="small" style="font-weight:700;color:${p.alive ? '#10b981' : '#f43f5e'}">${p.alive ? 'Живий' : 'Загинув'}</div>
+      </div>
+    </div>`).join(''));
+}
+
+function renderChatState() {
+  const me = players[uid], ph = game.phase;
+  const inp = $('chat-input'), btn = $('chat-send'), st = $('chat-state');
+  let ok = false, ph_ = 'Напишіть повідомлення…', s = '';
+  if (ph === 'lobby' || ph === 'ended') ok = true;
+  else if (!me || !me.alive) { ph_ = 'Ви мертві…'; s = 'мертві мовчать'; }
+  else if (ph === 'night') { ph_ = 'Вночі чат закритий'; s = 'ніч — чат закритий'; }
+  else ok = true;
+  inp.disabled = !ok; btn.disabled = !ok; inp.placeholder = ph_; st.textContent = s;
+  $('cry-wrap').hidden = !(me && !me.alive && !me.hasUsedDeathCry && !['lobby', 'ended'].includes(ph));
+}
+
+function renderChat() {
+  const box = $('chat');
+  const near = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+  const items = Object.entries(chatData).map(([k, m]) => ({ ...m, k }));
+  if (game.startedAt && game.phase !== 'lobby') {
+    Object.values(logsData).forEach((l) => { if (l.ts >= game.startedAt) items.push({ sys: true, text: l.t, ts: l.ts }); });
+  }
+  items.sort((a, b) => a.ts - b.ts);
+  setHTML(box, items.map((m) => {
+    if (m.sys) return `<div class="msg sys">${esc(m.text)}</div>`;
+    const cls = m.kind === 'cry' ? 'cry' : m.uid === uid ? 'mine' : '';
+    const nm = m.kind === 'cry' ? `💀 Останнє слово — ${esc(m.name)}` : esc(m.name);
+    const q = m.reply ? `<div class="quote"><b>${esc(m.reply.name)}</b>${esc(m.reply.text)}</div>` : '';
+    return `<div class="msg ${cls}"><button class="rp" data-k="${esc(m.k)}" aria-label="Відповісти"><i class="fa-solid fa-reply"></i></button><b>${nm}<span class="tm">${hhmm(m.ts)}</span></b>${q}${esc(m.text)}</div>`;
+  }).join(''));
+  if (near) box.scrollTop = box.scrollHeight;
+}
+
+function renderLog(data) {
+  const items = Object.values(data).sort((a, b) => a.ts - b.ts);
+  const box = $('log');
+  setHTML(box, items.slice().reverse().map((l) => `<div class="log-i"><small>${hhmm(l.ts)}</small>${esc(l.t)}</div>`).join('')
+    || '<div class="muted small">Подій поки немає.</div>');
+}
+
+function renderEnd() {
+  const m = $('modal-end');
+  if (game.phase !== 'ended' || !game.endedAt || endDismissedFor === game.endedAt) { m.classList.remove('open'); return; }
+  const [t, s] = WIN_TEXT[game.winner] || WIN_TEXT.none;
+  $('end-title').textContent = t; $('end-sub').textContent = s;
+  const rv = game.reveal || {};
+  setHTML($('reveal'), Object.values(rv).map((r) => {
+    const ro = ROLES[r.role] || ROLES.CITIZEN;
+    return `<div><span>${esc(r.name)}</span><b style="color:${ro.color}">${ro.name}</b></div>`;
+  }).join(''));
+  $('btn-end-main').textContent = isHost() ? 'Повернутися в лобі' : 'Закрити';
+  m.classList.add('open');
+}
+
+/* ---------- Звук і музика ---------- */
+let audioCtx = null, soundOn = true;
+function ctx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); return audioCtx; }
+function tone(freq, start, dur, type = 'sine', vol = 0.2, dest) {
+  const c = ctx(), o = c.createOscillator(), g = c.createGain();
+  o.type = type; o.frequency.value = freq; o.connect(g); g.connect(dest || c.destination);
+  g.gain.setValueAtTime(vol, start); g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  o.start(start); o.stop(start + dur);
+}
+function playSound(type) {
+  if (!soundOn) return;
+  try {
+    const c = ctx(), t = c.currentTime;
+    if (type === 'gong') { const o = c.createOscillator(), g = c.createGain(); o.connect(g); g.connect(c.destination);
+      o.frequency.setValueAtTime(300, t); o.frequency.exponentialRampToValueAtTime(100, t + 1); g.gain.setValueAtTime(.3, t); g.gain.exponentialRampToValueAtTime(.001, t + 1); o.start(t); o.stop(t + 1); }
+    else if (type === 'night') { const o = c.createOscillator(), g = c.createGain(); o.type = 'triangle'; o.connect(g); g.connect(c.destination);
+      o.frequency.setValueAtTime(350, t); o.frequency.exponentialRampToValueAtTime(700, t + .8); g.gain.setValueAtTime(.2, t); g.gain.exponentialRampToValueAtTime(.001, t + .8); o.start(t); o.stop(t + .8); }
+  } catch (_) {}
+}
+const N = { C: 261.63, D: 293.66, E: 329.63, F: 349.23, G: 392 };
+const MELODY = [['E',1],['E',1],['E',2],['E',1],['E',1],['E',2],['E',1],['G',1],['C',1.5],['D',.5],['E',4],
+  ['F',1],['F',1],['F',1.5],['F',.5],['F',1],['E',1],['E',1],['E',.5],['E',.5],['E',1],['D',1],['D',1],['E',1],['D',2],['G',2]];
+let musicOn = true, musicT = null, musicGain = null;
+try { musicOn = localStorage.getItem('mafia_music') !== '0'; } catch (_) {}
+function musicBus() {
+  const c = ctx();
+  if (!musicGain) { musicGain = c.createGain(); musicGain.gain.value = 1; musicGain.connect(c.destination); }
+  return musicGain;
+}
+function playMelody() {
+  if (!musicOn) return;
+  const c = ctx(), bus = musicBus(); let t = c.currentTime + 0.1; const beat = 0.3;
+  MELODY.forEach(([n, b]) => {
+    tone(N[n], t, b * beat * 0.9, 'triangle', 0.07, bus);
+    tone(N[n] * 2, t, b * beat * 0.6, 'sine', 0.02, bus);
+    t += b * beat;
+  });
+  musicT = setTimeout(playMelody, (t - c.currentTime + 1.5) * 1000);
+}
+function startMusic() {
+  if (!musicOn) return;
+  const c = ctx(), g = musicBus();
+  g.gain.cancelScheduledValues(c.currentTime); g.gain.setTargetAtTime(1, c.currentTime, 0.05);
+  clearTimeout(musicT); playMelody();
+}
+function stopMusic() {
+  clearTimeout(musicT); musicT = null;
+  if (musicGain) { const c = ctx(); musicGain.gain.cancelScheduledValues(c.currentTime); musicGain.gain.setTargetAtTime(0, c.currentTime, 0.05); }
+}
+function updateMusicBtn() {
+  const b = $('btn-music');
+  b.style.color = musicOn ? '#34d399' : '#f87171';
+  b.firstElementChild.className = 'fa-solid ' + (musicOn ? 'fa-music' : 'fa-volume-xmark');
+}
+$('btn-music').addEventListener('click', () => {
+  musicOn = !musicOn;
+  try { localStorage.setItem('mafia_music', musicOn ? '1' : '0'); } catch (_) {}
+  updateMusicBtn();
+  if (musicOn) startMusic(); else stopMusic();
+});
+updateMusicBtn();
+/* браузер дозволяє звук лише після першого дотику, тож музика стартує з ним */
+const unlockAudio = () => {
+  removeEventListener('click', unlockAudio); removeEventListener('touchend', unlockAudio);
+  if (musicOn && !musicT) startMusic();
+};
+addEventListener('click', unlockAudio); addEventListener('touchend', unlockAudio);
+
+/* ---------- Сніг ---------- */
+const cv = $('snow'), cx = cv.getContext('2d');
+let snowOn = true, flakes = [];
+function resizeSnow() { cv.width = innerWidth; cv.height = innerHeight; }
+addEventListener('resize', resizeSnow); resizeSnow();
+const FLAKES = innerWidth < 700 ? 45 : 90;
+for (let i = 0; i < FLAKES; i++) flakes.push({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, r: Math.random() * 2.5 + 1, s: Math.random() * 1.2 + .4, w: Math.random() - .5 });
+(function drawSnow() {
+  cx.clearRect(0, 0, cv.width, cv.height);
+  if (snowOn && !document.hidden) {
+    const day = document.documentElement.getAttribute('data-phase') === 'day';
+    cx.fillStyle = day ? 'rgba(37,99,235,.6)' : 'rgba(255,255,255,.75)'; cx.beginPath();
+    flakes.forEach((f) => {
+      cx.moveTo(f.x, f.y); cx.arc(f.x, f.y, f.r, 0, 6.283);
+      f.y += f.s; f.x += f.w;
+      if (f.y > cv.height) { f.y = -8; f.x = Math.random() * cv.width; }
+    });
+    cx.fill();
+  }
+  requestAnimationFrame(drawSnow);
+})();
+$('btn-snow').addEventListener('click', () => { snowOn = !snowOn; $('btn-snow').style.opacity = snowOn ? 1 : .4; });
+
+/* гірлянда */
+let garlandW = 0;
+function buildGarland() {
+  const W = innerWidth; if (W === garlandW) return; garlandW = W;
+  const seg = W < 500 ? 80 : 120, n = Math.ceil(W / seg), sag = 18;
+  const cols = ['#ef4444', '#fbbf24', '#34d399', '#38bdf8', '#f472b6'];
+  let d = '', bulbs = '', k = 0;
+  for (let i = 0; i < n; i++) {
+    const x0 = i * seg, x1 = x0 + seg, xm = x0 + seg / 2, cy = 2 + sag * 2;
+    d += `M${x0},2 Q${xm},${cy} ${x1},2 `;
+    [0.2, 0.4, 0.6, 0.8].forEach((t) => {
+      const u = 1 - t, x = u * u * x0 + 2 * u * t * xm + t * t * x1, y = u * u * 2 + 2 * u * t * cy + t * t * 2;
+      const c = cols[k % cols.length];
+      bulbs += `<i class="bulb" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;background:${c};color:${c};animation-delay:${(k % 4) * 0.4}s"></i>`;
+      k++;
+    });
+  }
+  $('garland').innerHTML = `<svg width="${W}" height="${sag + 8}" viewBox="0 0 ${W} ${sag + 8}"><path d="${d}" fill="none" stroke="#475569" stroke-width="1.5"/></svg>` + bulbs;
+}
+addEventListener('resize', buildGarland); buildGarland();
+
+addEventListener('focusin', (e) => { if (e.target.matches && e.target.matches('input,textarea')) document.body.classList.add('kb'); });
+addEventListener('focusout', () => document.body.classList.remove('kb'));
+
+/* Початковий рендер */
+render();
+</script>
+
+<!--
+=====================================================================
+ ПРАВИЛА REALTIME DATABASE (Firebase Console → Realtime Database → Rules)
+=====================================================================
+{
+  "rules": {
+    "mafia": {
+      "game": { ".read": "auth != null", ".write": "auth != null" },
+      "players": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === root.child('mafia/game/hostId').val()",
+        "$uid": { ".write": "auth != null && auth.uid === $uid && (!newData.exists() || data.exists() || !root.child('mafia/game/phase').exists() || root.child('mafia/game/phase').val() === 'lobby')" }
+      },
+      "private": {
+        ".read": "auth != null && auth.uid === root.child('mafia/game/hostId').val()",
+        ".write": "auth != null && auth.uid === root.child('mafia/game/hostId').val()",
+        "$uid": { ".read": "auth != null && auth.uid === $uid" }
+      },
+      "actions": {
+        ".read": "auth != null && auth.uid === root.child('mafia/game/hostId').val()",
+        ".write": "auth != null && auth.uid === root.child('mafia/game/hostId').val()",
+        "$uid": { ".write": "auth != null && auth.uid === $uid" }
+      },
+      "votes": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === root.child('mafia/game/hostId').val()",
+        "$uid": { ".write": "auth != null && auth.uid === $uid" }
+      },
+      "chat": { ".read": "auth != null", ".write": "auth != null" },
+      "logs": { ".read": "auth != null", ".write": "auth != null" }
+    }
+  }
+}
+-->
+</body>
+</html>
